@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.scroll-text {
+  display: block;
+  white-space: nowrap;
+  animation: scrollText 18s linear infinite;
+}
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
