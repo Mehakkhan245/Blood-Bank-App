@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { db } from "../firebase/config";
-import { getDonors } from "../services/jsonService";
+import { getDonors } from "../services/JsonService";
 function Donors() {
 const [donors, setDonors] = useState([]);
 const [bloodGroup, setBloodGroup] = useState("");
