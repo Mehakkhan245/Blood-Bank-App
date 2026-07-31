@@ -2,26 +2,78 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase/config";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/authSlice";
+import {
   FaEnvelope,
   FaLock,
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
-
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
-  const handleLogin = () => {
-    if (email.trim() === "" || password.trim() === "") {
-      alert("Please enter email and password");
-      return;
-    }
+const handleLogin = async () => {
+  if (!email || !password) {
+    alert("Please enter email and password");
+    return;
+  }
 
-    navigate("/dashboard");
-  };
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const userDoc = await getDoc(
+      doc(db, "users", userCredential.user.uid)
+    );
+
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+
+      dispatch(
+        setUser({
+          ...userCredential.user,
+          role: userData.role,
+        })
+      );
+
+      alert("Login Successful ❤️");
+
+      if (userData.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+};
+const handleForgotPassword = async () => {
+  if (!email) {
+    alert("Please enter your email first.");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset email sent successfully.");
+  } catch (error) {
+    alert(error.message);
+  }
+};
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-100 flex items-center justify-center px-6 py-10">
 
@@ -36,7 +88,7 @@ const [password, setPassword] = useState("");
           <div className="absolute w-96 h-96 bg-white/10 rounded-full -bottom-40 -right-32"></div>
 
           <img
-            src="public/images/login-left-side-image.png"
+            src="/images/login-left-side-image.png"
             alt="Blood Donation"
             className="relative z-10 w-[420px] hover:scale-105 duration-500"
           />
@@ -115,10 +167,12 @@ const [password, setPassword] = useState("");
             {/* Forgot Password */}
 
             <div className="flex justify-end mt-3">
-
-              <button className="text-red-600 hover:text-red-700 text-sm font-medium">
-                Forgot Password?
-              </button>
+<button
+  onClick={handleForgotPassword}
+  className="text-red-600 hover:text-red-700 text-sm font-medium"
+>
+  Forgot Password?
+</button>
 
             </div>
 

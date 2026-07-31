@@ -2,10 +2,7 @@ import { useState } from "react";
 import AnnouncementBar from "../components/AnnouncementBar";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
- import StatsCards from "../components/StatsCards";
-import HowItWorks from "../components/HowItWork";
-import BloodCompatibility from "../components/BloodCompatibility";
-import Features from "../components/Features";
+import Bloodcompatibility from "../components/BloodCompatibility";
 import About from "../components/About";
 import Footer from "../components/Footer";
 function Home() {
@@ -23,10 +20,7 @@ function Home() {
 
       <div className={showBar ? "pt-28" : "pt-20"}>
         <Hero />
-<StatsCards />
-<HowItWorks />
-<BloodCompatibility />
-<Features />
+        <Bloodcompatibility />
 <About />
 <Footer />
       </div>

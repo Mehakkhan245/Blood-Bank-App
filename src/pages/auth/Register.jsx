@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase/config";
+import { addDonor } from "../../services/jsonService";
 import {
   FaUser,
   FaEnvelope,
@@ -11,20 +14,30 @@ import {
 } from "react-icons/fa";
 
 function Register() {
-    const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const navigate = useNavigate();
 
 const [name, setName] = useState("");
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const handleRegister = () => {
+
+const [phone, setPhone] = useState("");
+const [blood, setBlood] = useState("");
+const [city, setCity] = useState("");
+const [available, setAvailable] = useState(true);
+ 
+  const handleRegister = async () => {
+    
   if (
-    name.trim() === "" ||
-    email.trim() === "" ||
-    password.trim() === "" ||
-    confirmPassword.trim() === ""
+    !name ||
+    !email ||
+    !password ||
+    !confirmPassword ||
+    !phone ||
+    !blood ||
+    !city
   ) {
     alert("Please fill all fields");
     return;
@@ -35,9 +48,30 @@ const [confirmPassword, setConfirmPassword] = useState("");
     return;
   }
 
-  alert("Account Created Successfully ❤️");
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-  navigate("/login");
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      name,
+      email,
+      phone,
+      blood,
+      city,
+      available,
+      role: "donor",
+      createdAt: new Date(),
+    });
+
+    alert("Account Created Successfully ❤️");
+    navigate("/login");
+  } catch (error) {
+  console.log(error);
+  alert(error.message);
+}
 };
 
   return (
@@ -73,98 +107,161 @@ const [confirmPassword, setConfirmPassword] = useState("");
               Join us and help save lives.
             </p>
 
-            {/* Full Name */}
-            <div className="mb-5">
-              <label className="block mb-2 font-medium text-gray-700">
-                Full Name
-              </label>
+           {/* Full Name */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    Full Name
+  </label>
 
-              <div className="relative">
-                <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+  <div className="relative">
+    <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
-            <input
-  type="text"
-  placeholder="Enter your full name"
-  value={name}
-  onChange={(e) => setName(e.target.value)}
-  className="w-full pl-12 py-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
-/>
-              </div>
-            </div>
+    <input
+      type="text"
+      placeholder="Enter your full name"
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+    />
+  </div>
+</div>
 
-            {/* Email */}
-            <div className="mb-5">
-              <label className="block mb-2 font-medium text-gray-700">
-                Email Address
-              </label>
+        {/* Email */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    Email Address
+  </label>
 
-              <div className="relative">
-                <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+  <div className="relative">
+    <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
-              <input
-  type="email"
-  placeholder="Enter your email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  className="w-full pl-12 py-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
-/>
-              </div>
-            </div>
+    <input
+      type="email"
+      placeholder="Enter your email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+    />
+  </div>
+</div>
 
-            {/* Password */}
-            <div className="mb-5">
-              <label className="block mb-2 font-medium text-gray-700">
-                Password
-              </label>
+    {/* Password */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    Password
+  </label>
 
-              <div className="relative">
-                <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-<input
-  type={showPassword ? "text" : "password"}
-  placeholder="Enter password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  className="w-full pl-12 pr-12 py-3 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
-/>
+  <div className="relative">
+    <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-            </div>
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="w-full pl-12 pr-12 py-3 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+    />
 
-            {/* Confirm Password */}
-            <div>
-              <label className="block mb-2 font-medium text-gray-700">
-                Confirm Password
-              </label>
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+    >
+      {showPassword ? <FaEyeSlash /> : <FaEye />}
+    </button>
+  </div>
+</div>
+           {/* Confirm Password */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    Confirm Password
+  </label>
 
-              <div className="relative">
-                <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-<input
-  type={showConfirmPassword ? "text" : "password"}
-  placeholder="Confirm password"
-  value={confirmPassword}
-  onChange={(e) => setConfirmPassword(e.target.value)}
-  className="w-full pl-12 pr-12 py-3 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
-/>
+  <div className="relative">
+    <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
-                >
-                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-            </div>
+    <input
+      type={showConfirmPassword ? "text" : "password"}
+      placeholder="Confirm password"
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      className="w-full pl-12 pr-12 py-3 rounded-xl border border-gray-300 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+    />
 
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+    >
+      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+    </button>
+  </div>
+</div>
+
+{/* Phone */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    Phone Number
+  </label>
+
+  <input
+    type="text"
+    placeholder="Phone Number"
+    value={phone}
+    onChange={(e) => setPhone(e.target.value)}
+    className="w-full border border-gray-300 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+  />
+</div>
+{/* Blood Group */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    Blood Group
+  </label>
+
+  <select
+    value={blood}
+    onChange={(e) => setBlood(e.target.value)}
+    className="w-full border border-gray-300 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+  >
+    <option value="">Select Blood Group</option>
+    <option value="O+">O+</option>
+    <option value="O-">O-</option>
+    <option value="A+">A+</option>
+    <option value="A-">A-</option>
+    <option value="B+">B+</option>
+    <option value="B-">B-</option>
+    <option value="AB+">AB+</option>
+    <option value="AB-">AB-</option>
+  </select>
+</div>
+{/* City */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    City
+  </label>
+
+  <input
+    type="text"
+    placeholder="Enter your city"
+    value={city}
+    onChange={(e) => setCity(e.target.value)}
+    className="w-full border border-gray-300 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+  />
+</div>{/* Availability */}
+<div className="mb-5">
+  <label className="block mb-2 font-medium text-gray-700">
+    Availability
+  </label>
+
+  <select
+    value={available}
+    onChange={(e) => setAvailable(e.target.value === "true")}
+    className="w-full border border-gray-300 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-red-200 focus:border-red-600 outline-none"
+  >
+    <option value="true">Available</option>
+    <option value="false">Not Available</option>
+  </select>
+</div>
             {/* Register Button */}
            <button
   onClick={handleRegister}
@@ -191,6 +288,7 @@ const [confirmPassword, setConfirmPassword] = useState("");
       </div>
 
     </div>
+    
   );
 }
 

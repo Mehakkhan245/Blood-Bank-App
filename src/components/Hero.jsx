@@ -58,60 +58,6 @@ with our trusted Blood Bank platform.
 
 </p>
 
-
-
-<div className="flex justify-center gap-5 mt-8">
-
-
-<button 
-className="
-bg-red-600 
-text-white 
-px-8 
-py-4 
-rounded-full 
-hover:bg-red-700 
-transition 
-flex 
-items-center 
-gap-2
-">
-
-<FaTint />
-
-Become a Donor
-
-</button>
-
-
-
-<button 
-className="
-border-2 
-border-red-600 
-text-red-600 
-px-8 
-py-4 
-rounded-full 
-hover:bg-red-600 
-hover:text-white 
-transition 
-flex 
-items-center 
-gap-2
-">
-
-<FaSearch />
-
-Find Blood
-
-</button>
-
-
-</div>
-
-
-
 {/* Three Features */}
 
 <div className="flex justify-between items-center gap-6 mt-10 w-full">
@@ -177,9 +123,7 @@ Find Blood
 </div>
 
 </div>
-
 </div>
-
 </section>
 );
 }

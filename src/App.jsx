@@ -2,22 +2,53 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Dashboard from "./pages/dashboard/Dashboard";
-import Donors from "./pages/dashboard/Donors";
-import Requests from "./pages/dashboard/Requests";
-import Profile from "./pages/dashboard/Profile";
-import EditProfile from "./pages/dashboard/EditProfile";
+import Donors from "./pages/Donors";
+import Requests from "./pages/Requests";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminRoute from "./routes/AdminRoute";
 function App() {
-   return (
+  return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-       <Route path="/dashboard" element={<Dashboard />} />
-<Route path="/donors" element={<Donors />} />
-<Route path="/requests" element={<Requests />} />
-<Route path="/profile" element={<Profile />} />
-<Route path="/edit-profile" element={<EditProfile />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+ <Route
+  path="/donors"
+  element={
+    <ProtectedRoute>
+      <Donors />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/requests"
+  element={
+    <ProtectedRoute>
+      <Requests />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin"
+  element={
+    <AdminRoute>
+      <AdminDashboard />
+    </AdminRoute>
+  }
+/>
     </Routes>
   );
 }

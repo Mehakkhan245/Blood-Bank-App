@@ -12,7 +12,6 @@ function Navbar({ showBar }) {
         {/* Logo */}
         <div className="flex items-center gap-3 cursor-pointer">
 
-          {/* Replace with your logo image */}
           <div className="w-12 h-12 rounded-full bg-[#C1121F] flex items-center justify-center text-white font-bold text-xl">
             B
           </div>
@@ -28,50 +27,40 @@ function Navbar({ showBar }) {
         </div>
         {/* Menu */}
         <ul className="hidden lg:flex items-center gap-10 font-medium text-gray-700">
-          <li>
-          <a
-  href="#home"
-  className="hover:text-red-600 transition duration-300"
->
-  Home
-</a>
+ <li>
+  <Link
+    to="/"
+    className="hover:text-red-600 transition duration-300"
+  >
+    Home
+  </Link>
 </li>
 
           <li>
-            <a
-              href="#howitworks"
-              className="hover:text-red-600 transition duration-300"
-            >
-              How It Works
-              
-            </a>
+           <Link
+  to="/donors"
+  className="hover:text-red-600 transition duration-300"
+>
+  Donors
+</Link>
           </li>
 
           <li>
-            <a
-              href="#compatibility"
-              className="hover:text-red-600 transition duration-300"
-            >
-              Compatibility
-            </a>
+         <Link
+  to="/register"
+  className="hover:text-red-600 transition duration-300"
+>
+  Donate
+</Link>
           </li>
 
           <li>
-            <a
-              href="#features"
-              className="hover:text-red-600 transition duration-300"
-            >
-              Features
-            </a>
-          </li>
-
-          <li>
-            <a
-              href="#about"
-              className="hover:text-red-600 transition duration-300"
-            >
-              About
-            </a>
+            <Link
+  to="/requests"
+  className="hover:text-red-600 transition duration-300"
+>
+  Blood Requests
+</Link>
           </li>
 
         </ul>
